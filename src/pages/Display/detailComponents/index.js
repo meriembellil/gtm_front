@@ -1,0 +1,106 @@
+import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { Col, Row, Modal } from "reactstrap"
+import DisplayBody from './DisplayBody'
+
+const DisplayDetail = (props) => {
+
+    const { display } = props
+    const [modal_fullscreen, setmodal_fullscreen] = useState(false)
+
+    function tog_fullscreen() {
+        setmodal_fullscreen(!modal_fullscreen)
+        document.body.classList.add("no_padding")
+    }
+
+    return (
+        <>
+            <Link
+                to="#"
+                style={{ fontSize: "1.3rem", marginRight: "1rem" }}
+                onClick={() => { tog_fullscreen() }}
+            >
+                <i className="mdi mdi-eye-minus-outline" id="detailtooltip" />
+            </Link>
+            <Modal
+                size="xl"
+                isOpen={modal_fullscreen}
+                toggle={() => { tog_fullscreen() }}
+            >
+                <div className="modal-header">
+                    <h5
+                        className="modal-title mt-0"
+                        id="exampleModalFullscreenLabel"
+                    >
+                        {"Display detail"}
+                    </h5>
+                    <button
+                        onClick={() => {
+                            setmodal_fullscreen(false)
+                        }}
+                        type="button"
+                        className="close"
+                        data-dismiss="modal"
+                        aria-label="Close"
+                    >
+                    </button>
+                </div>
+                <div className="modal-body">
+                    <div className="row justify-content-center">
+                        <div className="col-xl-9">
+                            <div className="text-center">
+                                <div className="mb-4">
+                                    <Link
+                                        to="#"
+                                        className="badge bg-light font-size-12"
+                                    >
+                                        <i className="bx bx-purchase-tag-alt align-middle text-muted me-1"></i>{" "}
+                                        {display.displayType.name}
+                                    </Link>
+                                </div>
+                                <h4>{"Merchandiser : " + display.user.first_name + " " + display.user.last_name}</h4>
+                                <h4>{"Store : " + display.store.name + ", " + display.store.address + " - " + display.store.governorate}</h4>
+                                <p className="text-muted mb-4">
+                                    <i className="mdi mdi-calendar me-1"></i> {new Date(display.createdAt).toUTCString().slice(0, 22)}
+                                </p>
+                            </div>
+                            {(display.category?.name || display.brand?.name) &&
+                                <>
+                                    <hr />
+                                    <div className="text-center">
+                                        <Row>
+                                            {display.category?.name &&
+                                                <Col>
+                                                    <div>
+                                                        <p className="text-muted mb-2">Category</p>
+                                                        <h5 className="font-size-15">{display.category?.name}</h5>
+                                                    </div>
+                                                </Col>
+                                            }
+                                            {display.brand?.name &&
+                                                <Col>
+                                                    <div className="mt-4 mt-sm-0">
+                                                        <p className="text-muted mb-2">Brand</p>
+                                                        <h5 className="font-size-15">{display.brand?.name}</h5>
+                                                    </div>
+                                                </Col>
+                                            }
+                                        </Row>
+                                    </div>
+                                    <hr />
+                                </>
+                            }
+                            <DisplayBody
+                                sections={display.displayType.displaySections}
+                                displayData={display.displayData}
+                                customValues={display.displayCustomFieldValues}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </Modal>
+        </>
+    )
+}
+
+export default DisplayDetail
